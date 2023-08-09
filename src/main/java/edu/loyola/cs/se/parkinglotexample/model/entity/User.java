@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package edu.loyola.cs.se.parkinglotexample.model.entity;
 
 import javax.persistence.*;

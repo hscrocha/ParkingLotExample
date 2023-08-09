@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package edu.loyola.cs.se.parkinglotexample.util;
 
 import java.io.File;
@@ -6,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-/**
+/***
  * Singleton pattern for Environment Properties
  * @author Prof. H. Rocha
  */

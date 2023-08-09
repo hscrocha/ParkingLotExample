@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package edu.loyola.cs.se.parkinglotexample;
 
 import java.io.*;

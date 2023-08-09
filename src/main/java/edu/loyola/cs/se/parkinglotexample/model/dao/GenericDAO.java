@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package edu.loyola.cs.se.parkinglotexample.model.dao;
 
 import edu.loyola.cs.se.parkinglotexample.model.entity.BaseEntity;
@@ -8,22 +9,49 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.lang.annotation.Annotation;
+import java.util.List;
 
+/***
+ * GenricDAO (Database Access Object) with basic DB operations:
+ * Create, Read, Update, Delete, and List.
+ * Be sure to use the DbType.TEST to run on the test DB.
+ *
+ * @param <E> The Entity (subclass of BaseEntity) and annotated with @javax.persistence.Entity
+ */
 public abstract class GenericDAO<E extends BaseEntity> {
     public enum DbType {STANDARD, TEST};
-    protected static EntityManagerFactory standardEMF = null;
-    protected static EntityManagerFactory testEMF = null;
+    protected static EntityManagerFactory standardEMF = null; //Factory for Normal DB
+    protected static EntityManagerFactory testEMF = null; //Factory for Test DB
 
-    protected DbType DbTypeOutput = DbType.STANDARD;
-    protected Class<E> EntityClass;
-    public GenericDAO(Class<E> entityclass, DbType output){
+    protected DbType DbTypeOutput = DbType.STANDARD; //Sets standard DAO output to Normal DB
+    protected Class<E> EntityClass; //Necessary to use some functions
+
+    /***
+     * Default Constructor, it requires a BaseEntity subclass as Entity.class
+     * Since GenericDAO is an abstract class you cannot instantiate by itself (this is by design and not a bug)
+     * the goal is to enforce developers to create a subclas of GenericDAO
+     * @param entityclass
+     */
+    public GenericDAO(Class<E> entityclass){
         this.EntityClass = entityclass;
+    }
+
+    /***
+     * Sets up the DAO outputs to a different DB
+     * Mostly used to set the output to the Test DB
+     * @param output
+     */
+    public void setDbTypeOutput(DbType output){
         this.DbTypeOutput = output;
     }
-    public GenericDAO(Class<E> entityclass){
-        this(entityclass, DbType.STANDARD);
-    }
 
+    /***
+     * Creates the EntityManagerFactory if it does not exist,
+     * and uses it to return a reference to EntityManager.
+     * EntityManager is the JPA class to communicate with the DB.
+     *
+     * @return the appropriate EntityManager (for Production or Test DB)
+     */
     protected EntityManager getEntityManager(){
         EntityManagerFactory fac = null;
         switch (DbTypeOutput){
@@ -39,6 +67,10 @@ public abstract class GenericDAO<E extends BaseEntity> {
         return fac.createEntityManager();
     }
 
+    /***
+     * Creates (Saves/Inserts) a new entity into the DB.
+     * @param entity A BaseEntity subclass object to be saved in the DB.
+     */
     public void create(E entity){
         EntityManager em = this.getEntityManager();
         em.getTransaction().begin();
@@ -47,10 +79,21 @@ public abstract class GenericDAO<E extends BaseEntity> {
         em.close();
     }
 
+    /***
+     * Read operation uses getID() function inside the entity
+     * to call for read(int id) function.
+     * @param entity A BaseEntity subclass object
+     * @return the entity full info that was in the DB or null if it does not exist
+     */
     public E read(E entity){
         return read(entity.getID());
     }
 
+    /***
+     * Read operation, searches DB for the specified ID.
+     * @param id The id in the DB
+     * @return A BaseEntity subclass with the appropriate record in the DB, or null if it does not exist
+     */
     public E read(int id){
         EntityManager em = this.getEntityManager();
         E entity = em.find(EntityClass, id);
@@ -58,6 +101,11 @@ public abstract class GenericDAO<E extends BaseEntity> {
         return entity;
     }
 
+    /***
+     * Updates the entity in the DB
+     * @param entity The entity to be updated
+     * @return The updated version of the entity
+     */
     public E update(E entity){
         EntityManager em = this.getEntityManager();
         em.getTransaction().begin();
@@ -66,10 +114,19 @@ public abstract class GenericDAO<E extends BaseEntity> {
         return updated;
     }
 
+    /***
+     * Deletes the record in DB specified by the ID.
+     * @param id The ID in the DB
+     */
     public void delete(int id){
         E entity = read(id);
         delete(entity);
     }
+
+    /***
+     * Deletes the entity in the DB
+     * @param entity
+     */
     public void delete(E entity){
         if(entity!=null && entity.getID()!=null) {
             EntityManager em = this.getEntityManager();
@@ -80,16 +137,13 @@ public abstract class GenericDAO<E extends BaseEntity> {
         }
     }
 
-    /**
-     * Delete All records in the table.
+    /***
+     * Deletes all records in the table.
      * This should *not* be used in Production DB only for TestDB
      */
     public void deleteAll(){
         if(DbTypeOutput==DbType.TEST) {
-            String query;
-            javax.persistence.Table tableannotation = EntityClass.getAnnotation(javax.persistence.Table.class);
-            if (tableannotation != null) query = "DELETE FROM " + tableannotation.name();
-            else query = "DELETE FROM " + EntityClass.getName();
+            String query = "DELETE FROM "+getTableName();
 
             EntityManager em = this.getEntityManager();
             em.getTransaction().begin();
@@ -98,5 +152,30 @@ public abstract class GenericDAO<E extends BaseEntity> {
         } else {
             System.out.println("Access Denied, cannot use deleteAll outside testing.");
         }
+    }
+
+    /***
+     * List operation returns a list of all records in the table mapped by the DAO.
+     *
+     * @param Order String specifying the database field(s) for the Order by clause.
+     * @return A java.util.List of entities
+     */
+    public List<E> list(String Order){
+        String query = "SELECT entity FROM "+getTableName()+" entity";
+        if(Order!=null) query+=" ORDER BY "+Order;
+
+        EntityManager em = this.getEntityManager();
+        List<E> results = em.createQuery(query,EntityClass).getResultList();
+        return results;
+    }
+
+    /***
+     * Used to get the Table Name in the DB mapped by this DAO.
+     * @return A String with the appropriate table name mapped by this DAO.
+     */
+    public String getTableName(){
+        javax.persistence.Table tableAnnotation = EntityClass.getAnnotation(javax.persistence.Table.class);
+        if(tableAnnotation != null) return tableAnnotation.name();
+        else return EntityClass.getName();
     }
 }

@@ -21,7 +21,8 @@ public class UserDaoTest {
     }
 
     @BeforeAll public static void createDao(){
-        dao = new UserDAO(GenericDAO.DbType.TEST);
+        dao = new UserDAO();
+        dao.setDbTypeOutput(GenericDAO.DbType.TEST);
     }
 
     @BeforeEach public void deleteAll(){
@@ -36,7 +37,7 @@ public class UserDaoTest {
         User newuser = createNewUserEntity();
 
         dao.create(newuser);
-        User found = dao.read(newuser);
+        User found = dao.read(newuser.getID());
         assertAll("Grouped Assertions of Create User",
                 () -> assertNotNull(newuser.getID(), "ID should not be null after creation"),
                 () -> assertNotNull(found, "Found user after reading should not be null"),
@@ -71,6 +72,24 @@ public class UserDaoTest {
                 () -> assertEquals(updated.getLogin(),found.getLogin()),
                 () -> assertEquals(updated.getPermission(),found.getPermission())
             );
+    }
+
+    @Test public void testList(){
+        User u1 = createNewUserEntity();
+        User u2 = createNewUserEntity();
+        User u3 = createNewUserEntity();
+        u1.setLogin("ZZ");
+        u2.setLogin("LL");
+        u3.setLogin("AA");
+        dao.create(u1);
+        dao.create(u2);
+        dao.create(u3);
+        java.util.List<User> lstUser = dao.list("login");
+        assertAll("Grouped Assertions for List User",
+                () -> assertEquals(lstUser.size(), 3),
+                () -> assertEquals(lstUser.get(0).getLogin(),"AA"),
+                () -> assertEquals(lstUser.get(2).getLogin(),"ZZ")
+        );
     }
 
 }
