@@ -34,7 +34,7 @@ to any web page I want.
         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><span class="bi-person-circle"></span> Account</a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
           <li id="menu-login"><a class="dropdown-item" href="/login.html">Login</a></li>
-          <li id="menu-register"><a class="dropdown-item" href="./register.jsp">Register</a></li>
+          <li id="menu-register"><a class="dropdown-item" href="register.jsp">Register</a></li>
           <li style="display:none;" id="menu-logout"><a class="dropdown-item" href="/logout">Logout</a></li>
         </ul>
       </li>

@@ -18,7 +18,10 @@
     <div class="container">
 
     </div>
+
     <%-- =================================== --%>
     <jsp:include page="components/footer.jsp" />
+    <script type="text/javascript"> <%-- Any custom JS goes in the bottom --%>
+    </script>
 </body>
 </html>
