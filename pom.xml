@@ -46,11 +46,17 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>5.4.0</version>
         </dependency>
-        <!-- SQL Driver (MySQL in this example) -->
+        <!-- MySQL Driver (I am using MySQL in this example) -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.28</version>
+        </dependency>
+        <!-- Maria DB Driver (If you want to use MariaDB) -->
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.1.4</version>
         </dependency>
         <!-- Hibernate Core -->
         <dependency>
