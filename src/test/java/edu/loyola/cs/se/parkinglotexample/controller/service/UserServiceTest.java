@@ -2,6 +2,7 @@ package edu.loyola.cs.se.parkinglotexample.controller.service;
 
 import edu.loyola.cs.se.parkinglotexample.model.dao.UserDAO;
 import edu.loyola.cs.se.parkinglotexample.model.entity.User;
+import edu.loyola.cs.se.parkinglotexample.util.PasswordUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*; //Mock Framework
@@ -42,6 +43,49 @@ public class UserServiceTest {
 
         //Since the Exception is caught inside the method, we can test the return
         assertNull(returned, "Returned user should be null if Login exists (exception).");
+    }
+
+    @Test public void testLoginSuccessful(){
+        //Setup Data & Expected returns
+        String email = "test@test.com";
+        String unhashed = "654321";
+        String hashed = PasswordUtil.hash(unhashed);
+        User answer = new User(101,email,hashed,User.NORMAL_PERMISSION);
+
+        //We need to use Mocks to test the controller layer
+        UserDAO mockDAO = mock(UserDAO.class);
+        //ATTENTION: the mock part bellow is different for every test
+        when(mockDAO.findUserByLogin(anyString())).thenReturn(answer);
+        UserService.setDAO(mockDAO);
+
+        //Method Under Test
+        User logged = UserService.loginUser(email,unhashed);
+
+        //Assertions (Finally)
+        assertAll("Login User Service assertion",
+            ()-> assertNotNull(logged,"Logged user cannot be null") ,
+            ()-> assertEquals(logged.getID(), answer.getID())
+        );
+    }
+
+    @Test public void testLoginFailurePasswordDotNotMatch(){
+        //Setup Data & Expected returns
+        String email = "test@test.com";
+        String incorrectPass = "654321";
+        String hashed = PasswordUtil.hash("123456");
+        User answer = new User(101,email,hashed,User.NORMAL_PERMISSION);
+
+        //We need to use Mocks to test the controller layer
+        UserDAO mockDAO = mock(UserDAO.class);
+        //ATTENTION: the mock part bellow is different for every test
+        when(mockDAO.findUserByLogin(anyString())).thenReturn(answer);
+        UserService.setDAO(mockDAO);
+
+        //Method Under Test
+        User logged = UserService.loginUser(email,incorrectPass);
+
+        //Assertions (Finally)
+        assertNull(logged,"Logged must be null if password is incorrect");
     }
 
 }

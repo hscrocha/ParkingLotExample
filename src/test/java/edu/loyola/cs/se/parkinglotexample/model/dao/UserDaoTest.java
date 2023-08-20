@@ -12,10 +12,14 @@ public class UserDaoTest {
 
     public static UserDAO dao = null;
 
+    /***
+     * To facilitate tests, this method create a new User Entity object
+     *
+     * @return User with ID=null, login="test@test.com", password="111",
+     */
     public static User createNewUserEntity(){
         User u = new User();
         u.setLogin("test@test.com");
-        u.setPermission(User.NORMAL_PERMISSION);
         u.setPassword("111");
         return u;
     }
@@ -102,5 +106,22 @@ public class UserDaoTest {
                 () -> dao.create(user2),
                 "Login is a unique field in the DB, cannot have repeated login saved."
         );//Should not allow to create two user with the same Login
+    }
+
+    @Test public void testLoginSuccess(){
+        User newuser = createNewUserEntity();
+
+        dao.create(newuser); //Create a new user
+        User logged = dao.findUserByLogin(newuser.getLogin());
+        assertAll("Successful Login Assertions",
+                ()-> assertNotNull(logged,"Logged user cannot be null"),
+                ()-> assertNotNull(logged.getPassword(), "Password from logged user cannot be null"),
+                ()-> assertTrue(logged.getPassword().length()>0, "Password cannot be empty")
+        );
+    }
+
+    @Test public void testLoginFailure(){
+        User logged = dao.findUserByLogin("DoesNotExist@nowhere.com");
+        assertNull(logged, "Logged User must return null if Login not found");
     }
 }

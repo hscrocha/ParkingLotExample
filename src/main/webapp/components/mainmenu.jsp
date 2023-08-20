@@ -20,12 +20,15 @@ to any web page I want.
         <a class="nav-link" href="index.jsp"><span class="bi-house-fill"></span> Home</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="users.html">Users</a>
+        <a class="nav-link" href="#">My Vehicles</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Parking</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Contact</a>
       </li>
-      <li id="menu-admin" style="display:none" class="nav-item">
+      <li id="menu-admin" class="nav-item">
         <a class="nav-link" href="admin.html">Admin</a>
       </li>
     </ul>
@@ -33,9 +36,10 @@ to any web page I want.
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><span class="bi-person-circle"></span> Account</a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-          <li id="menu-login"><a class="dropdown-item" href="/login.html">Login</a></li>
+          <li id="menu-login"><a class="dropdown-item" href="login.jsp">Login</a></li>
           <li id="menu-register"><a class="dropdown-item" href="register.jsp">Register</a></li>
-          <li style="display:none;" id="menu-logout"><a class="dropdown-item" href="/logout">Logout</a></li>
+          <li id="menu-profile disable"><a class="dropdown-item" href="#">Profile</a></li>
+          <li id="menu-logout"><a class="dropdown-item" href="logoutServlet">Logout</a></li>
         </ul>
       </li>
     </ul>
