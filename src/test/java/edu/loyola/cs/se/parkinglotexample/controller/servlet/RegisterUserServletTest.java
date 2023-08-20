@@ -5,6 +5,7 @@ import edu.loyola.cs.se.parkinglotexample.model.entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.exceptions.verification.WantedButNotInvoked;
@@ -20,11 +21,13 @@ public class RegisterUserServletTest {
         //Servlets always have two main parameters request & repost which we need to mock
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpSession sessionMock = mock(HttpSession.class); //In this case, also Session
 
         //Setup the mock "inputs" on request
         when(request.getParameter("txt_name")).thenReturn("TestName");
         when(request.getParameter("txt_login")).thenReturn("test@test.com");
         when(request.getParameter("txt_pass")).thenReturn("123456");
+        when(request.getSession()).thenReturn(sessionMock);
 
         //Setup the mock "outputs" on response
         doNothing().when(response).sendRedirect(anyString());

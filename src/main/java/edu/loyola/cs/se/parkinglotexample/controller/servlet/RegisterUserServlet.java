@@ -26,6 +26,10 @@ public class RegisterUserServlet extends HttpServlet {
         if(registered==null) {
             response.sendRedirect("register.jsp?error=1");
         } else {
+            //Lets also "log-in"
+            HttpSession session = request.getSession();
+            registered.setPassword("");
+            session.setAttribute("User", registered);
             response.sendRedirect("user/registrationsuccess.jsp");
         }
     }

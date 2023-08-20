@@ -55,7 +55,7 @@
                     We take pride on offering great services
                     through this webapp to make your parking more convenient.</p>
                 <hr/>
-                <h3c class="text-primary"> Quickstart Guide </h3c>
+                <h3 class="text-primary"> Quickstart Guide </h3>
                 <ul>
                     <li><b>1. </b> Login, congratz you completed this already!</li>
                     <li><b>2. </b> Click on <a href="#">My Vehicles</a> on top to add/update your
