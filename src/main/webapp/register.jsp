@@ -6,6 +6,21 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%  String error = request.getParameter("error");
+    String errorMessage = "";
+
+    if(error != null) {
+        switch (error) {
+            case "1":
+                errorMessage = "Email already registered in our App.";
+                break;
+            case "2":
+                errorMessage = "Unexpected error. Please contact the web master.";
+                break;
+        }
+    }
+
+%>
 <html>
 <head>
     <jsp:include page="components/header.jsp"/>
@@ -17,7 +32,7 @@
 
 <div class="container mt-2">
     <h3 class="center text-primary"> Register New User </h3>
-    <form method="post" action="hello-servlet">
+    <form method="post" action="registerUserServlet">
         <div class="row mb-2">
             <label class="col-form-label col-md-3 col-lg-1" for="txt_name"> Name: </label>
             <%-- BUG: This form has Name (not in my DB) to show that Web page Form is not the same as DB Entity  --%>
@@ -60,6 +75,20 @@
         </div>
     </form>
 </div>
+
+<% if(errorMessage.length()>0){ %>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <strong>Error!</strong> <%= errorMessage %>
+            </div>
+        </div>
+    </div>
+</div>
+<% } /*Closing IF */ %>
+
 
 <%-- =================================== --%>
 <jsp:include page="components/footer.jsp"/>
