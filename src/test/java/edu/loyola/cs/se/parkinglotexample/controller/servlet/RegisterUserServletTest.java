@@ -38,8 +38,8 @@ public class RegisterUserServletTest {
             servlet.doPost(request,response);
 
             assertDoesNotThrow(
-                    () -> verify(response).sendRedirect("login.jsp?msg=0"),
-                    "RegisterUserServlet should called sendRedirect(\"login.jsp?msg=0\")");
+                    () -> verify(response).sendRedirect("user/registrationsuccess.jsp"),
+                    "RegisterUserServlet should called sendRedirect(\"user/registrationsuccess.jsp\")");
         }
     }
 

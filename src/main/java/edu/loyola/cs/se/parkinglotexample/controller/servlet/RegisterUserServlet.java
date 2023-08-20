@@ -30,9 +30,6 @@ public class RegisterUserServlet extends HttpServlet {
         }
     }
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        processRequest(request,response);
-    }
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         processRequest(request,response);
     }
