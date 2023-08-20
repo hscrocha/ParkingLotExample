@@ -15,7 +15,7 @@ public class UserDaoTest {
     public static User createNewUserEntity(){
         User u = new User();
         u.setLogin("test@test.com");
-        u.setPermission(1);
+        u.setPermission(User.NORMAL_PERMISSION);
         u.setPassword("111");
         return u;
     }
@@ -56,7 +56,7 @@ public class UserDaoTest {
     @Test public void smokeTestDeleteWhatDoesNotExists(){
         //Smoke test has no assertion, we are only testing if this does not raise any exceptions
         User notsaved = createNewUserEntity();
-        dao.delete(notsaved);
+        assertDoesNotThrow(() -> dao.delete(notsaved));
     }
 
     @Test public void testUpdateUser(){
@@ -92,4 +92,15 @@ public class UserDaoTest {
         );
     }
 
+    @Test
+    public void testUniqueConstraintLogin(){
+        User user1 = createNewUserEntity();
+        dao.create(user1);
+
+        User user2 = createNewUserEntity();
+        assertThrows(javax.persistence.PersistenceException.class,
+                () -> dao.create(user2),
+                "Login is a unique field in the DB, cannot have repeated login saved."
+        );//Should not allow to create two user with the same Login
+    }
 }

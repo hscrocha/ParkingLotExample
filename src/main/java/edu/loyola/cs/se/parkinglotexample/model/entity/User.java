@@ -7,11 +7,16 @@ import javax.persistence.*;
 public class User extends BaseEntity {
     @Id @Column(name="id_user") @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer ID = null;
+    @Column(unique=true) //Login must be unique for each record in DB
     private String Login;
     private String Password;
     private int Permission;
 
+    public transient static final int NORMAL_PERMISSION = 1;
+    public transient static final int ADMIN_PERMISSION = 2;
+
     public User(){
+        this.Permission = NORMAL_PERMISSION;
     }
 
     public User(Integer ID, String login, String password, int permission) {
@@ -36,6 +41,20 @@ public class User extends BaseEntity {
         Login = login;
     }
 
+    /***
+     * Returns the email which should be same as the Login
+     *
+     * @return
+     */
+    public String getEmail(){ return getLogin(); }
+
+    /***
+     * Sets the Email which should be same as Login
+     */
+    public void setEmail(String email){
+        setLogin(email);
+    }
+
     public String getPassword() {
         return Password;
     }
@@ -53,12 +72,3 @@ public class User extends BaseEntity {
     }
 }
 
-/* SQL Creation Script
-create table User(
-   id_user int not null auto_increment,
-   login varchar(50) not null,
-   password varchar(50) not null,
-   permission int default 1,
-   constraint user_pk primary key(id_user)
-);
- */

@@ -71,12 +71,20 @@ public abstract class GenericDAO<E extends BaseEntity> {
      * Creates (Saves/Inserts) a new entity into the DB.
      * @param entity A BaseEntity subclass object to be saved in the DB.
      */
-    public void create(E entity){
+    public E create(E entity){
         EntityManager em = this.getEntityManager();
-        em.getTransaction().begin();
-        em.persist(entity);
-        em.getTransaction().commit();
-        em.close();
+        try {
+            em.getTransaction().begin();
+            em.persist(entity);
+            em.getTransaction().commit();
+            em.close();
+        }catch(Exception ex){
+            //Something went wrong (like duplicate unique filed)
+            em.getTransaction().rollback(); //abort transaction
+            em.close();
+            throw ex; //rethrow for the upper layer to know what happened
+        }
+        return entity;
     }
 
     /***
@@ -108,9 +116,17 @@ public abstract class GenericDAO<E extends BaseEntity> {
      */
     public E update(E entity){
         EntityManager em = this.getEntityManager();
-        em.getTransaction().begin();
-        E updated = em.merge(entity);
-        em.getTransaction().commit();
+        E updated = null;
+        try {
+            em.getTransaction().begin();
+            updated = em.merge(entity);
+            em.getTransaction().commit();
+            em.close();
+        }catch(Exception ex){
+            em.getTransaction().rollback();
+            em.close();
+            throw ex;
+        }
         return updated;
     }
 
@@ -128,12 +144,21 @@ public abstract class GenericDAO<E extends BaseEntity> {
      * @param entity
      */
     public void delete(E entity){
-        if(entity!=null && entity.getID()!=null) {
-            EntityManager em = this.getEntityManager();
+        if(entity==null || entity.getID()==null){
+            return;
+        }
+
+        EntityManager em = this.getEntityManager();
+        try {
             em.getTransaction().begin();
             E mergedContext = em.merge(entity);
             em.remove(mergedContext);
             em.getTransaction().commit();
+            em.close();
+        }catch(Exception ex){
+            em.getTransaction().rollback();
+            em.close();
+            throw ex;
         }
     }
 
@@ -142,15 +167,22 @@ public abstract class GenericDAO<E extends BaseEntity> {
      * This should *not* be used in Production DB only for TestDB
      */
     public void deleteAll(){
-        if(DbTypeOutput==DbType.TEST) {
-            String query = "DELETE FROM "+getTableName();
+        if(DbTypeOutput!=DbType.TEST){
+            System.out.println("Access Denied, cannot use deleteAll outside testing.");
+            return;
+        }
 
-            EntityManager em = this.getEntityManager();
+        String query = "DELETE FROM "+getTableName();
+
+        EntityManager em = this.getEntityManager();
+        try {
             em.getTransaction().begin();
             em.createQuery(query).executeUpdate();
             em.getTransaction().commit();
-        } else {
-            System.out.println("Access Denied, cannot use deleteAll outside testing.");
+            em.close();
+        }catch(Exception ex){
+            em.getTransaction().rollback();
+            em.close();
         }
     }
 
@@ -178,4 +210,5 @@ public abstract class GenericDAO<E extends BaseEntity> {
         if(tableAnnotation != null) return tableAnnotation.name();
         else return EntityClass.getName();
     }
+
 }
