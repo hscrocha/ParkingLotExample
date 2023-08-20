@@ -1,4 +1,4 @@
-<%--
+<%@ page import="edu.loyola.cs.se.parkinglotexample.model.entity.User" %><%--
   Created by IntelliJ IDEA.
   User: Prof H. Rocha
   Date: 8/17/23
@@ -13,33 +13,43 @@ I am going to center its code here for reuse.
 Then I can just use <jsp:include> to add this menu and all its logic
 to any web page I want.
 --%>
+<%
+  User logged = (User) session.getAttribute("User");
+%>
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark"> <!-- Main Menu -->
   <div class="container-fluid">
     <ul class="navbar-nav">
       <li class="nav-item">
         <a class="nav-link" href="index.jsp"><span class="bi-house-fill"></span> Home</a>
       </li>
+      <% if(logged!=null){ //user is logged in the website %>
       <li class="nav-item">
         <a class="nav-link" href="#">My Vehicles</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Parking</a>
       </li>
+      <% } //end-if %>
       <li class="nav-item">
         <a class="nav-link" href="#">Contact</a>
       </li>
+      <% if(logged!=null && logged.getPermission()==User.ADMIN_PERMISSION){ %>
       <li id="menu-admin" class="nav-item">
-        <a class="nav-link" href="admin.html">Admin</a>
+        <a class="nav-link" href="admin.jsp">Admin</a>
       </li>
+      <% } //end-if %>
     </ul>
     <ul class="navbar-nav ms-auto">
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><span class="bi-person-circle"></span> Account</a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-          <li id="menu-login"><a class="dropdown-item" href="login.jsp">Login</a></li>
-          <li id="menu-register"><a class="dropdown-item" href="register.jsp">Register</a></li>
-          <li id="menu-profile disable"><a class="dropdown-item" href="#">Profile</a></li>
-          <li id="menu-logout"><a class="dropdown-item" href="logoutServlet">Logout</a></li>
+          <% if(logged==null){ //User is not logged in the website %>
+            <li id="menu-login"><a class="dropdown-item" href="login.jsp">Login</a></li>
+            <li id="menu-register"><a class="dropdown-item" href="register.jsp">Register</a></li>
+          <% } else { //User is logged %>
+            <li id="menu-profile"><a class="dropdown-item" href="#">Profile</a></li>
+            <li id="menu-logout"><a class="dropdown-item" href="logoutServlet">Logout</a></li>
+          <% } //Closing else %>
         </ul>
       </li>
     </ul>
