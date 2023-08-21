@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RegisterUserServletTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">java in ParkingLotExample Coverage Results</a> &gt; <a href="index.source.html" class="el_package">edu.loyola.cs.se.parkinglotexample.controller.servlet</a> &gt; <span class="el_source">RegisterUserServletTest.java</span></div><h1>RegisterUserServletTest.java</h1><pre class="source lang-java linenums">package edu.loyola.cs.se.parkinglotexample.controller.servlet;
+
+import edu.loyola.cs.se.parkinglotexample.controller.service.UserService;
+import edu.loyola.cs.se.parkinglotexample.model.entity.User;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.exceptions.verification.WantedButNotInvoked;
+
+import java.io.IOException;
+
+import static org.mockito.Mockito.*; //Mock Framework
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L18">public class RegisterUserServletTest {</span>
+
+    @Test public void testDoPostNormalPath() throws IOException, ServletException {
+        //Servlets always have two main parameters request &amp; repost which we need to mock
+<span class="fc" id="L22">        HttpServletRequest request = mock(HttpServletRequest.class);</span>
+<span class="fc" id="L23">        HttpServletResponse response = mock(HttpServletResponse.class);</span>
+<span class="fc" id="L24">        HttpSession sessionMock = mock(HttpSession.class); //In this case, also Session</span>
+
+        //Setup the mock &quot;inputs&quot; on request
+<span class="fc" id="L27">        when(request.getParameter(&quot;txt_name&quot;)).thenReturn(&quot;TestName&quot;);</span>
+<span class="fc" id="L28">        when(request.getParameter(&quot;txt_login&quot;)).thenReturn(&quot;test@test.com&quot;);</span>
+<span class="fc" id="L29">        when(request.getParameter(&quot;txt_pass&quot;)).thenReturn(&quot;123456&quot;);</span>
+<span class="fc" id="L30">        when(request.getSession()).thenReturn(sessionMock);</span>
+
+        //Setup the mock &quot;outputs&quot; on response
+<span class="fc" id="L33">        doNothing().when(response).sendRedirect(anyString());</span>
+
+        //Also need to mock UserService, since it is static method, the mocking is different
+<span class="fc" id="L36">        try (MockedStatic&lt;UserService&gt; service = mockStatic(UserService.class)) {</span>
+            //Inside try block, we can replace static method calls to UserService
+<span class="fc" id="L38">            service.when(() -&gt; UserService.registerUser(any()) ).thenReturn(new User());</span>
+
+<span class="fc" id="L40">            RegisterUserServlet servlet = new RegisterUserServlet();</span>
+<span class="fc" id="L41">            servlet.doPost(request,response);</span>
+
+<span class="fc" id="L43">            assertDoesNotThrow(</span>
+<span class="fc" id="L44">                    () -&gt; verify(response).sendRedirect(&quot;user/registrationsuccess.jsp&quot;),</span>
+                    &quot;RegisterUserServlet should called sendRedirect(\&quot;user/registrationsuccess.jsp\&quot;)&quot;);
+        }
+<span class="fc" id="L47">    }</span>
+
+    @Test public void testDoPostAlternativePath() throws IOException, ServletException {
+        //Servlets always have two main parameters request &amp; repost which we need to mock
+<span class="fc" id="L51">        HttpServletRequest request = mock(HttpServletRequest.class);</span>
+<span class="fc" id="L52">        HttpServletResponse response = mock(HttpServletResponse.class);</span>
+
+        //Setup the mock &quot;inputs&quot; on request
+<span class="fc" id="L55">        when(request.getParameter(&quot;txt_name&quot;)).thenReturn(&quot;TestName&quot;);</span>
+<span class="fc" id="L56">        when(request.getParameter(&quot;txt_login&quot;)).thenReturn(&quot;test@test.com&quot;);</span>
+<span class="fc" id="L57">        when(request.getParameter(&quot;txt_pass&quot;)).thenReturn(&quot;123456&quot;);</span>
+
+        //Setup the mock &quot;outputs&quot; on response
+<span class="fc" id="L60">        doNothing().when(response).sendRedirect(anyString());</span>
+
+        //Also need to mock UserService, since it is static method, the mocking is different
+<span class="fc" id="L63">        try (MockedStatic&lt;UserService&gt; service = mockStatic(UserService.class)) {</span>
+            //Inside try block, we can replace static method calls to UserService
+<span class="fc" id="L65">            service.when(() -&gt; UserService.registerUser(any()) ).thenReturn(null);</span>
+
+<span class="fc" id="L67">            RegisterUserServlet servlet = new RegisterUserServlet();</span>
+<span class="fc" id="L68">            servlet.doPost(request,response);</span>
+
+<span class="fc" id="L70">            assertDoesNotThrow(</span>
+<span class="fc" id="L71">                    () -&gt; verify(response).sendRedirect(&quot;register.jsp?error=1&quot;),</span>
+                    &quot;RegisterUserServlet should called sendRedirect(\&quot;register.jsp?error=1\&quot;)&quot;);
+        }
+<span class="fc" id="L74">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -21,6 +21,7 @@ public class UserDaoTest {
         User u = new User();
         u.setLogin("test@test.com");
         u.setPassword("111");
+        u.setPermission(User.NORMAL_PERMISSION);
         return u;
     }
 
@@ -82,9 +83,9 @@ public class UserDaoTest {
         User u1 = createNewUserEntity();
         User u2 = createNewUserEntity();
         User u3 = createNewUserEntity();
-        u1.setLogin("ZZ");
-        u2.setLogin("LL");
-        u3.setLogin("AA");
+        u1.setEmail("ZZ");
+        u2.setEmail("LL");
+        u3.setEmail("AA");
         dao.create(u1);
         dao.create(u2);
         dao.create(u3);
@@ -92,19 +93,36 @@ public class UserDaoTest {
         assertAll("Grouped Assertions for List User",
                 () -> assertEquals(lstUser.size(), 3),
                 () -> assertEquals(lstUser.get(0).getLogin(),"AA"),
-                () -> assertEquals(lstUser.get(2).getLogin(),"ZZ")
+                () -> assertEquals(lstUser.get(2).getEmail(),"ZZ")
         );
     }
 
     @Test
-    public void testUniqueConstraintLogin(){
+    public void testCreateUniqueConstraintLogin(){
         User user1 = createNewUserEntity();
         dao.create(user1);
 
         User user2 = createNewUserEntity();
         assertThrows(javax.persistence.PersistenceException.class,
                 () -> dao.create(user2),
-                "Login is a unique field in the DB, cannot have repeated login saved."
+                "Login is a unique field in the DB, cannot have repeated login saved on create."
+        );//Should not allow to create two user with the same Login
+    }
+
+    @Test
+    public void testUpdateUniqueConstraintLogin(){
+        User user1 = createNewUserEntity();
+        dao.create(user1);
+
+        User user2 = createNewUserEntity();
+        user2.setLogin("different@test.com");
+        dao.create(user2);
+
+        user2.setLogin( user1.getLogin() ); //Set Login to one that in DB
+
+        assertThrows(javax.persistence.PersistenceException.class,
+                () -> dao.update(user2),
+                "Login is a unique field in the DB, cannot have repeated login saved on update."
         );//Should not allow to create two user with the same Login
     }
 

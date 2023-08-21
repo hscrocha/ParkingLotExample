@@ -183,6 +183,7 @@ public abstract class GenericDAO<E extends BaseEntity> {
         }catch(Exception ex){
             em.getTransaction().rollback();
             em.close();
+            throw ex;
         }
     }
 

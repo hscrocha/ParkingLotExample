@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RegisterUserServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">java in ParkingLotExample Coverage Results</a> &gt; <a href="index.source.html" class="el_package">edu.loyola.cs.se.parkinglotexample.controller.servlet</a> &gt; <span class="el_source">RegisterUserServlet.java</span></div><h1>RegisterUserServlet.java</h1><pre class="source lang-java linenums">// SPDX-License-Identifier: MIT
+package edu.loyola.cs.se.parkinglotexample.controller.servlet;
+
+import java.io.*;
+
+import edu.loyola.cs.se.parkinglotexample.controller.service.UserService;
+import edu.loyola.cs.se.parkinglotexample.model.entity.User;
+import edu.loyola.cs.se.parkinglotexample.util.PasswordUtil;
+import jakarta.servlet.http.*;
+import jakarta.servlet.annotation.*;
+
+@WebServlet(name = &quot;registerUserServlet&quot;, value = &quot;/registerUserServlet&quot;)
+<span class="fc" id="L13">public class RegisterUserServlet extends HttpServlet {</span>
+
+    public void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+<span class="fc" id="L16">        String strName = request.getParameter(&quot;txt_name&quot;);</span>
+<span class="fc" id="L17">        String strLogin = request.getParameter(&quot;txt_login&quot;);</span>
+<span class="fc" id="L18">        String strPass = request.getParameter(&quot;txt_pass&quot;);</span>
+
+<span class="fc" id="L20">        User newUser = new User();</span>
+        // There is no Name in User Entity (small BUG on purpose)
+<span class="fc" id="L22">        newUser.setLogin(strLogin);</span>
+<span class="fc" id="L23">        newUser.setPassword(PasswordUtil.hash(strPass));</span>
+
+<span class="fc" id="L25">        User registered = UserService.registerUser(newUser);</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        if(registered==null) {</span>
+<span class="fc" id="L27">            response.sendRedirect(&quot;register.jsp?error=1&quot;);</span>
+        } else {
+            //Lets also &quot;log-in&quot;
+<span class="fc" id="L30">            HttpSession session = request.getSession();</span>
+<span class="fc" id="L31">            registered.setPassword(&quot;&quot;);</span>
+<span class="fc" id="L32">            session.setAttribute(&quot;User&quot;, registered);</span>
+<span class="fc" id="L33">            response.sendRedirect(&quot;user/registrationsuccess.jsp&quot;);</span>
+        }
+<span class="fc" id="L35">    }</span>
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+<span class="fc" id="L38">        processRequest(request,response);</span>
+<span class="fc" id="L39">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

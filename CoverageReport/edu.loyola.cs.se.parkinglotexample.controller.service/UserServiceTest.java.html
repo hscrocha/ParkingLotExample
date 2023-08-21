@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserServiceTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">java in ParkingLotExample Coverage Results</a> &gt; <a href="index.source.html" class="el_package">edu.loyola.cs.se.parkinglotexample.controller.service</a> &gt; <span class="el_source">UserServiceTest.java</span></div><h1>UserServiceTest.java</h1><pre class="source lang-java linenums">package edu.loyola.cs.se.parkinglotexample.controller.service;
+
+import edu.loyola.cs.se.parkinglotexample.model.dao.UserDAO;
+import edu.loyola.cs.se.parkinglotexample.model.entity.User;
+import edu.loyola.cs.se.parkinglotexample.util.PasswordUtil;
+import org.junit.jupiter.api.Test;
+
+import static org.mockito.Mockito.*; //Mock Framework
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L11">public class UserServiceTest {</span>
+    @Test public void testRegisterUser(){
+        //Setup Data &amp; Expected Return
+<span class="fc" id="L14">        User registered = new User(101,&quot;test@test.com&quot;,&quot;123456&quot;,User.NORMAL_PERMISSION);</span>
+<span class="fc" id="L15">        User newUser = new User(null,&quot;test@test.com&quot;,&quot;123456&quot;,User.NORMAL_PERMISSION);</span>
+
+        //We need to use Mocks to test the controller layer
+<span class="fc" id="L18">        UserDAO mockDAO = mock(UserDAO.class);</span>
+<span class="fc" id="L19">        when(mockDAO.create(any(User.class))).thenReturn(registered);</span>
+<span class="fc" id="L20">        UserService.setDAO(mockDAO);</span>
+
+        //Method Under Test
+<span class="fc" id="L23">        User returned = UserService.registerUser(newUser);</span>
+
+        //Assertions
+<span class="fc" id="L26">        assertAll(&quot;Register User Service Assertions&quot;,</span>
+<span class="fc" id="L27">                () -&gt; assertEquals(returned.getID(),registered.getID(), &quot;Registered ID should be 101&quot;),</span>
+<span class="fc" id="L28">                () -&gt; assertEquals(returned.getLogin(), registered.getLogin(), &quot;Registered Login should be test@test.com&quot;)</span>
+        );
+<span class="fc" id="L30">    }</span>
+
+    @Test public void testRegisteredUserCatchingException(){
+<span class="fc" id="L33">        User newUser = new User();</span>
+
+        //We need to use Mocks to test the controller layer
+<span class="fc" id="L36">        UserDAO mockDAO = mock(UserDAO.class);</span>
+        //ATTENTION: the mock part bellow is different - I am forcing the method to always throw an exception
+<span class="fc" id="L38">        when(mockDAO.create(any(User.class))).thenThrow(new javax.persistence.PersistenceException(&quot;Test Exception&quot;));</span>
+<span class="fc" id="L39">        UserService.setDAO(mockDAO);</span>
+
+        //Method Under Test
+<span class="fc" id="L42">        User returned = UserService.registerUser(newUser);</span>
+
+        //Since the Exception is caught inside the method, we can test the return
+<span class="fc" id="L45">        assertNull(returned, &quot;Returned user should be null if Login exists (exception).&quot;);</span>
+<span class="fc" id="L46">    }</span>
+
+    @Test public void testLoginSuccessful(){
+        //Setup Data &amp; Expected returns
+<span class="fc" id="L50">        String email = &quot;test@test.com&quot;;</span>
+<span class="fc" id="L51">        String unhashed = &quot;654321&quot;;</span>
+<span class="fc" id="L52">        String hashed = PasswordUtil.hash(unhashed);</span>
+<span class="fc" id="L53">        User answer = new User(101,email,hashed,User.NORMAL_PERMISSION);</span>
+
+        //We need to use Mocks to test the controller layer
+<span class="fc" id="L56">        UserDAO mockDAO = mock(UserDAO.class);</span>
+        //ATTENTION: the mock part bellow is different for every test
+<span class="fc" id="L58">        when(mockDAO.findUserByLogin(anyString())).thenReturn(answer);</span>
+<span class="fc" id="L59">        UserService.setDAO(mockDAO);</span>
+
+        //Method Under Test
+<span class="fc" id="L62">        User logged = UserService.loginUser(email,unhashed);</span>
+
+        //Assertions (Finally)
+<span class="fc" id="L65">        assertAll(&quot;Login User Service assertion&quot;,</span>
+<span class="fc" id="L66">            ()-&gt; assertNotNull(logged,&quot;Logged user cannot be null&quot;) ,</span>
+<span class="fc" id="L67">            ()-&gt; assertEquals(logged.getID(), answer.getID())</span>
+        );
+<span class="fc" id="L69">    }</span>
+
+    @Test public void testLoginFailurePasswordDotNotMatch(){
+        //Setup Data &amp; Expected returns
+<span class="fc" id="L73">        String email = &quot;test@test.com&quot;;</span>
+<span class="fc" id="L74">        String incorrectPass = &quot;654321&quot;;</span>
+<span class="fc" id="L75">        String hashed = PasswordUtil.hash(&quot;123456&quot;);</span>
+<span class="fc" id="L76">        User answer = new User(101,email,hashed,User.NORMAL_PERMISSION);</span>
+
+        //We need to use Mocks to test the controller layer
+<span class="fc" id="L79">        UserDAO mockDAO = mock(UserDAO.class);</span>
+        //ATTENTION: the mock part bellow is different for every test
+<span class="fc" id="L81">        when(mockDAO.findUserByLogin(anyString())).thenReturn(answer);</span>
+<span class="fc" id="L82">        UserService.setDAO(mockDAO);</span>
+
+        //Method Under Test
+<span class="fc" id="L85">        User logged = UserService.loginUser(email,incorrectPass);</span>
+
+        //Assertions (Finally)
+<span class="fc" id="L88">        assertNull(logged,&quot;Logged must be null if password is incorrect&quot;);</span>
+<span class="fc" id="L89">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
