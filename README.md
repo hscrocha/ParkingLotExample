@@ -18,6 +18,14 @@ Be sure to change the content on the [persistence.xml](src/main/resources/META-I
 
 If you want to use another database instead of MySQL, you need to add the appropriate Java Driver (or JDBC Connector) to the [pom.xml](pom.xml) and click on the maven icon for it to download this driver and build it into the project. 
 
+## Code Coverage
+
+ItelliJ uses its own framework for coverage. Unfortunately, such framework lacks Branch Coverage. Therefore, I added [Jacoco](https://www.jacoco.org/jacoco/) as the main coverage framework. 
+
+You may need to configure your IntelliJ to use Jacoco instead of its own, on this [StackOverflow Answer](https://stackoverflow.com/questions/43500774/jacoco-with-intellij) it is detailed how to do so (please dont go for the first answer, but the one about "Community 2022.1 & Community 2022.2" bellow, also upvote this answer if possible).
+
+After running your test *with Coverage*, go to the IntelliJ menu "Run -> Generate Coverage Report" to create an HTML report with your coverage. There is an example of such report created by Jacoco in this repository on ```CoverageReport``` folder. If your report does not match the example here (and does have information on Branches), then you are __not__ using Jacoco but the internal IntelliJ. Go back to the above Stackoverflow link and try again (more carefully this time). 
+
 
 
 
