@@ -4,6 +4,8 @@ import edu.loyola.cs.se.parkinglotexample.model.dao.UserDAO;
 import edu.loyola.cs.se.parkinglotexample.model.entity.User;
 import edu.loyola.cs.se.parkinglotexample.util.PasswordUtil;
 
+import java.util.List;
+
 public class UserService {
 
     public static UserDAO dao = new UserDAO();
@@ -49,5 +51,16 @@ public class UserService {
             // I separated them to make it easier to explain the logic for some students
         }
         return null; //Login or Password incorrect
+    }
+
+    /***
+     * Returns a list of all Users in the DB
+     * Usually for an Admin CRUD needs to see all data
+     * @param Order Which field to order the results
+     * @return User list
+     */
+    public static List<User> listUsers(String Order){
+        List<User> lstUser = dao.list(Order);
+        return lstUser;
     }
 }

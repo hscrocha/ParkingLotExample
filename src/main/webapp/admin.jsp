@@ -23,7 +23,7 @@
 
     <div class="row">
         <div class="d-grid col-3 col-md-1 offset-1">
-            <a href="#" class="btn btn-primary" style="width:100px">
+            <a href="admin/cruduser.jsp" class="btn btn-primary" style="width:100px">
                 <h3><span class="bi bi-people-fill"></span></h3>
                 Manage Users
             </a>

@@ -70,5 +70,11 @@ public class User extends BaseEntity {
     public void setPermission(int permission) {
         Permission = permission;
     }
+
+    public String getPermissionAsString(){
+        if(Permission==NORMAL_PERMISSION) return "Normal";
+        else if(Permission==ADMIN_PERMISSION) return "Admin";
+        else return "Unknown";
+    }
 }
 

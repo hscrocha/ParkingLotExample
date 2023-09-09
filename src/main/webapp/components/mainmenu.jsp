@@ -14,6 +14,7 @@ Then I can just use <jsp:include> to add this menu and all its logic
 to any web page I want.
 --%>
 <%
+  //Logged User to show/hide certain parts of the menu
   User logged = (User) session.getAttribute("User");
 %>
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark"> <!-- Main Menu -->

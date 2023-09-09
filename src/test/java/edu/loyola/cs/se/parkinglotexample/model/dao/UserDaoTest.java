@@ -46,7 +46,8 @@ public class UserDaoTest {
         assertAll("Grouped Assertions of Create User",
                 () -> assertNotNull(newuser.getID(), "ID should not be null after creation"),
                 () -> assertNotNull(found, "Found user after reading should not be null"),
-                () -> assertEquals(newuser.getLogin(), found.getLogin(), "Login for the newuser must be equal to the Login for the found user")
+                () -> assertEquals(newuser.getLogin(), found.getLogin(), "Login for the newuser must be equal to the Login for the found user"),
+                () -> assertEquals(newuser.getPermissionAsString(),found.getPermissionAsString())
                 );
     }
 

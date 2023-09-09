@@ -5,6 +5,9 @@ import edu.loyola.cs.se.parkinglotexample.model.entity.User;
 import edu.loyola.cs.se.parkinglotexample.util.PasswordUtil;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Mockito.*; //Mock Framework
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -86,6 +89,17 @@ public class UserServiceTest {
 
         //Assertions (Finally)
         assertNull(logged,"Logged must be null if password is incorrect");
+    }
+
+    @Test public void testListUsers(){
+        //We need to use Mocks to test the controller layer
+        UserDAO mockDAO = mock(UserDAO.class);
+        //ATTENTION: the mock part bellow is different for every test
+        when(mockDAO.list(anyString())).thenReturn(new ArrayList<User>());
+        UserService.setDAO(mockDAO);
+
+        List<User> lst = UserService.listUsers("Login");
+        assertNotNull(lst);
     }
 
 }
