@@ -1,25 +1,11 @@
 <%--
   Created by IntelliJ IDEA.
-  User: Prof H Rocha
-  Date: 8/20/23
-  Time: 10:40
+  User: hsrocha
+  Date: 9/8/23
+  Time: 21:49
+  To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%  String code = request.getParameter("msg");
-    String message = "";
-
-    if(code != null) {
-        switch (code) {
-            case "1":
-                message = "Login or Password Incorrect.";
-                break;
-            case "2":
-                message = "Unexpected error. Please contact the web master.";
-                break;
-        }
-    }
-
-%>
 <html>
 <head>
     <jsp:include page="components/header.jsp"/>
@@ -60,18 +46,6 @@
     </form>
 </div>
 
-<% if(message.length()>0){ %>
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="alert alert-warning alert-dismissible">
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                <%= message %>
-            </div>
-        </div>
-    </div>
-</div>
-<% } /*Closing IF */ %>
 
 <br/><br/>
 <br/><br/>

@@ -89,6 +89,7 @@
 </div>
 <% } /*Closing IF */ %>
 
+<br/><br/>
 
 <%-- =================================== --%>
 <jsp:include page="components/footer.jsp"/>
