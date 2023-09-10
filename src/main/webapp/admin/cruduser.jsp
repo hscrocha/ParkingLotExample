@@ -48,7 +48,7 @@
             <% for(User u : lstUsers){ %>
                 <tr>
                     <td style="max-width:30px">
-                        <a href="#"><span class="bi bi-pencil-square text-primary" title="edit"></span></a>
+                        <a href="../user/edituser.jsp?id=<%= u.getID()%>&login=<%= u.getLogin()%>&perm=<%= u.getPermission()%>"><span class="bi bi-pencil-square text-primary" title="edit"></span></a>
                         <a href="../deleteUserServlet?id=<%= u.getID()%>" onclick="return window.confirm('Are you sure?')"><span class="bi bi-trash3 text-danger" title="delete"></span></a>
                     </td>
                     <td> <%= u.getID() %> </td>
@@ -69,7 +69,7 @@
                 <h4 class="modal-title" id="UserModalTitle">New User</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form class="was-validated" method="post" action="crudUserServlet">
+            <form class="was-validated" method="post" action="../registerUserServlet"> <%-- I can adapt the registerUser servlet or create a new servlet for this task --%>
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div class="container" id="UserMainForm">

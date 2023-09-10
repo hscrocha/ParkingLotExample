@@ -11,10 +11,19 @@ import java.util.List;
 import static org.mockito.Mockito.*; //Mock Framework
 import static org.junit.jupiter.api.Assertions.*;
 
+/***
+ * It is much more difficult to Mock static method calls
+ * I only kept the methods here static to show how to test static methods
+ * You should probably avoid static methods and turn these into normal methods for easier testing.
+ *
+ * If any student shows up seeking help with a similar Service
+ * class with static methods, they will need a pretty good explaination
+ * on why they are using static methods instead of normal ones.
+ */
 public class UserServiceTest {
     @Test public void testRegisterUser(){
         //Setup Data & Expected Return
-        User registered = new User(101,"test@test.com","123456",User.NORMAL_PERMISSION);
+        User registered = new User(101,"test@test.com",PasswordUtil.hash("123456"),User.NORMAL_PERMISSION);
         User newUser = new User(null,"test@test.com","123456",User.NORMAL_PERMISSION);
 
         //We need to use Mocks to test the controller layer
@@ -34,6 +43,7 @@ public class UserServiceTest {
 
     @Test public void testRegisteredUserCatchingException(){
         User newUser = new User();
+        newUser.setPassword("123");
 
         //We need to use Mocks to test the controller layer
         UserDAO mockDAO = mock(UserDAO.class);
@@ -110,6 +120,59 @@ public class UserServiceTest {
         UserService.setDAO(mockDAO);
 
         assertDoesNotThrow( ()-> UserService.deleteUser(1) );
+    }
+
+    @Test public void testEditUserNoPassword(){
+        //Setup Data & Expected Return
+        User registered = new User(101,"test@test.com",PasswordUtil.hash("123456"),User.NORMAL_PERMISSION);
+        User updatedUser = new User(101,"test@test.com",null,User.NORMAL_PERMISSION);
+
+        //We need to use Mocks to test the controller layer
+        UserDAO mockDAO = mock(UserDAO.class);
+        when(mockDAO.update(any(User.class))).thenReturn(registered);
+        when(mockDAO.read(anyInt())).thenReturn(registered);
+        UserService.setDAO(mockDAO);
+
+        //Method Under Test
+        User returned = UserService.editUser(updatedUser);
+
+        //Assertions
+        assertAll("Edit User Assertions -- No password",
+                () -> assertEquals(returned.getID(),registered.getID(), "Updated User ID should be 101"),
+                () -> assertEquals(returned.getPassword(), registered.getPassword(), "Updated User Password should be a hashed version from read()"),
+                () -> assertDoesNotThrow(
+                        () -> verify(mockDAO).read(eq(updatedUser.getID())),"editUser should have called dao.read(101)"
+                ),
+                () -> assertDoesNotThrow(
+                    () -> verify(mockDAO).update(any(User.class)),"editUser should have called dao.update()"
+                )
+        );
+    }
+
+    @Test public void testEditUserWithPassword(){
+        //Setup Data & Expected Return
+        String unhashedPass = "123456";
+        User updatedUser = new User(101,"test@test.com",unhashedPass,User.NORMAL_PERMISSION);
+
+        //We need to use Mocks to test the controller layer
+        UserDAO mockDAO = mock(UserDAO.class);
+        when(mockDAO.update(any(User.class))).thenReturn(updatedUser);
+        UserService.setDAO(mockDAO);
+
+        //Method Under Test
+        User returned = UserService.editUser(updatedUser);
+
+        //Assertions
+        assertAll("Edit User Assertions -- No password",
+                () -> assertEquals(returned.getID(),updatedUser.getID(), "Updated User ID should be 101"),
+                () -> assertNotEquals(returned.getPassword(), unhashedPass, "Returned User Password should be a hashed version from read()"),
+                () -> assertDoesNotThrow(
+                        () -> verify(mockDAO, never()).read(anyInt()),"editUser should never called dao.read() for a user with password"
+                ),
+                () -> assertDoesNotThrow(
+                        () -> verify(mockDAO).update(any(User.class)),"editUser should have called dao.update()"
+                )
+        );
     }
 
 }

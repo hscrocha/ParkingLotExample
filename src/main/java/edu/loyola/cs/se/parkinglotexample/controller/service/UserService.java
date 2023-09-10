@@ -23,6 +23,8 @@ public class UserService {
      */
     public static User registerUser(User newUser){
         try {
+            String hashed = PasswordUtil.hash(newUser.getPassword());
+            newUser.setPassword(hashed);
             newUser = dao.create(newUser);
         }catch(javax.persistence.PersistenceException ex){
             //Repeated login
@@ -66,5 +68,21 @@ public class UserService {
 
     public static void deleteUser(int id){
         dao.delete(id);
+    }
+
+    public static User editUser(User u){
+
+        if(u.getPassword()==null || u.getPassword().trim().length()==0){
+            //No Password was given, we need to fetch it from DB
+            User original = dao.read(u.getID());
+            u.setPassword(original.getPassword()); //original pass is already hashed (it is supposed to be!)
+        }
+        else{
+            //Password was typed, we need to hash it
+            String hashed = PasswordUtil.hash( u.getPassword() );
+            u.setPassword(hashed);
+        }
+
+        return dao.update(u);
     }
 }

@@ -5,7 +5,6 @@ import java.io.*;
 
 import edu.loyola.cs.se.parkinglotexample.controller.service.UserService;
 import edu.loyola.cs.se.parkinglotexample.model.entity.User;
-import edu.loyola.cs.se.parkinglotexample.util.PasswordUtil;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
@@ -13,6 +12,7 @@ import jakarta.servlet.annotation.*;
 public class RegisterUserServlet extends HttpServlet {
 
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //TODO: Adapt this code to Create User from the Admin Interface
         String strName = request.getParameter("txt_name");
         String strLogin = request.getParameter("txt_login");
         String strPass = request.getParameter("txt_pass");
@@ -20,7 +20,7 @@ public class RegisterUserServlet extends HttpServlet {
         User newUser = new User();
         // There is no Name in User Entity (small BUG on purpose)
         newUser.setLogin(strLogin);
-        newUser.setPassword(PasswordUtil.hash(strPass));
+        newUser.setPassword(strPass);
 
         User registered = UserService.registerUser(newUser);
         if(registered==null) {
