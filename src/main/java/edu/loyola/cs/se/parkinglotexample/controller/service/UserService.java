@@ -63,4 +63,8 @@ public class UserService {
         List<User> lstUser = dao.list(Order);
         return lstUser;
     }
+
+    public static void deleteUser(int id){
+        dao.delete(id);
+    }
 }
