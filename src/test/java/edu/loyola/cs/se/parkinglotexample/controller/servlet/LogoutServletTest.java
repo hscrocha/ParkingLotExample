@@ -22,10 +22,8 @@ public class LogoutServletTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         HttpSession sessionMock = mock(HttpSession.class); //In this case, also Session
 
+        //Setup the mock "inputs" on request
         when(request.getSession()).thenReturn(sessionMock);
-
-        //Setup the mock "outputs" on response
-        doNothing().when(response).sendRedirect(anyString());
 
         //Setup the mocks on Session
         doNothing().when(sessionMock).invalidate();

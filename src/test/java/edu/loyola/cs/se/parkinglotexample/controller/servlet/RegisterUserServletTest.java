@@ -29,9 +29,6 @@ public class RegisterUserServletTest {
         when(request.getParameter("txt_pass")).thenReturn("123456");
         when(request.getSession()).thenReturn(sessionMock);
 
-        //Setup the mock "outputs" on response
-        doNothing().when(response).sendRedirect(anyString());
-
         //Also need to mock UserService, since it is static method, the mocking is different
         try (MockedStatic<UserService> service = mockStatic(UserService.class)) {
             //Inside try block, we can replace static method calls to UserService
@@ -55,9 +52,6 @@ public class RegisterUserServletTest {
         when(request.getParameter("txt_name")).thenReturn("TestName");
         when(request.getParameter("txt_login")).thenReturn("test@test.com");
         when(request.getParameter("txt_pass")).thenReturn("123456");
-
-        //Setup the mock "outputs" on response
-        doNothing().when(response).sendRedirect(anyString());
 
         //Also need to mock UserService, since it is static method, the mocking is different
         try (MockedStatic<UserService> service = mockStatic(UserService.class)) {

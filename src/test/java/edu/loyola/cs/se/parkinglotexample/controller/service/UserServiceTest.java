@@ -106,7 +106,7 @@ public class UserServiceTest {
         //We need to use Mocks to test the controller layer
         UserDAO mockDAO = mock(UserDAO.class);
         //ATTENTION: the mock part bellow is different for every test
-        doNothing().when(mockDAO).delete(anyInt());
+        //doNothing().when(mockDAO).delete(anyInt()); //Not necessary
         UserService.setDAO(mockDAO);
 
         assertDoesNotThrow( ()-> UserService.deleteUser(1) );

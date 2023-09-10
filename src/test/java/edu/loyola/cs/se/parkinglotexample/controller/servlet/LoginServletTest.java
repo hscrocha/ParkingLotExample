@@ -34,12 +34,6 @@ public class LoginServletTest {
         when(request.getParameter("txt_pass")).thenReturn("123456");
         when(request.getSession()).thenReturn(sessionMock);
 
-        //Setup the mock "outputs" on response
-        doNothing().when(response).sendRedirect(anyString());
-
-        //Setup the mocks on Session
-        doNothing().when(sessionMock).setAttribute(anyString(), any(User.class));
-
         //Also need to mock UserService, since it is static method, the mocking is different
         try (MockedStatic<UserService> service = mockStatic(UserService.class)) {
             //Inside try block, we can replace static method calls to UserService
@@ -71,9 +65,6 @@ public class LoginServletTest {
         when(request.getParameter("txt_pass")).thenReturn("123456");
         when(request.getSession()).thenReturn(sessionMock);
 
-        //Setup the mock "outputs" on response
-        doNothing().when(response).sendRedirect(anyString());
-
         //Also need to mock UserService, since it is static method, the mocking is different
         try (MockedStatic<UserService> service = mockStatic(UserService.class)) {
             //Inside try block, we can replace static method calls to UserService
@@ -102,9 +93,6 @@ public class LoginServletTest {
         //Setup the mock "inputs" on request
         when(request.getParameter("txt_pass")).thenReturn("123456");
         when(request.getSession()).thenReturn(sessionMock);
-
-        //Setup the mock "outputs" on response
-        doNothing().when(response).sendRedirect(anyString());
 
         LoginServlet servlet = new LoginServlet();
         servlet.doGet(request, response);
