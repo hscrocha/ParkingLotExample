@@ -5,14 +5,14 @@ import java.io.*;
 
 import edu.loyola.cs.se.parkinglotexample.controller.service.UserService;
 import edu.loyola.cs.se.parkinglotexample.model.entity.User;
-import edu.loyola.cs.se.parkinglotexample.util.PasswordUtil;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 @WebServlet(name = &quot;registerUserServlet&quot;, value = &quot;/registerUserServlet&quot;)
-<span class="fc" id="L13">public class RegisterUserServlet extends HttpServlet {</span>
+<span class="fc" id="L12">public class RegisterUserServlet extends HttpServlet {</span>
 
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //TODO: Adapt this code to Create User from the Admin Interface
 <span class="fc" id="L16">        String strName = request.getParameter(&quot;txt_name&quot;);</span>
 <span class="fc" id="L17">        String strLogin = request.getParameter(&quot;txt_login&quot;);</span>
 <span class="fc" id="L18">        String strPass = request.getParameter(&quot;txt_pass&quot;);</span>
@@ -20,7 +20,7 @@ import jakarta.servlet.annotation.*;
 <span class="fc" id="L20">        User newUser = new User();</span>
         // There is no Name in User Entity (small BUG on purpose)
 <span class="fc" id="L22">        newUser.setLogin(strLogin);</span>
-<span class="fc" id="L23">        newUser.setPassword(PasswordUtil.hash(strPass));</span>
+<span class="fc" id="L23">        newUser.setPassword(strPass);</span>
 
 <span class="fc" id="L25">        User registered = UserService.registerUser(newUser);</span>
 <span class="fc bfc" id="L26" title="All 2 branches covered.">        if(registered==null) {</span>

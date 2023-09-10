@@ -70,6 +70,12 @@ public class User extends BaseEntity {
     public void setPermission(int permission) {
 <span class="fc" id="L71">        Permission = permission;</span>
 <span class="fc" id="L72">    }</span>
+
+    public String getPermissionAsString(){
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if(Permission==NORMAL_PERMISSION) return &quot;Normal&quot;;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        else if(Permission==ADMIN_PERMISSION) return &quot;Admin&quot;;</span>
+<span class="fc" id="L77">        else return &quot;Unknown&quot;;</span>
+    }
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

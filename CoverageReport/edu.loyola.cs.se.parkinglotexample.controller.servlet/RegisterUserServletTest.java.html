@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 <span class="fc" id="L18">public class RegisterUserServletTest {</span>
 
-    @Test public void testDoPostNormalPath() throws IOException, ServletException {
+    @Test public void testDoPostSuccessfulRegister() throws IOException, ServletException {
         //Servlets always have two main parameters request &amp; repost which we need to mock
 <span class="fc" id="L22">        HttpServletRequest request = mock(HttpServletRequest.class);</span>
 <span class="fc" id="L23">        HttpServletResponse response = mock(HttpServletResponse.class);</span>
@@ -29,48 +29,54 @@ import static org.junit.jupiter.api.Assertions.*;
 <span class="fc" id="L29">        when(request.getParameter(&quot;txt_pass&quot;)).thenReturn(&quot;123456&quot;);</span>
 <span class="fc" id="L30">        when(request.getSession()).thenReturn(sessionMock);</span>
 
-        //Setup the mock &quot;outputs&quot; on response
-<span class="fc" id="L33">        doNothing().when(response).sendRedirect(anyString());</span>
-
         //Also need to mock UserService, since it is static method, the mocking is different
-<span class="fc" id="L36">        try (MockedStatic&lt;UserService&gt; service = mockStatic(UserService.class)) {</span>
+<span class="fc" id="L33">        try (MockedStatic&lt;UserService&gt; service = mockStatic(UserService.class)) {</span>
             //Inside try block, we can replace static method calls to UserService
-<span class="fc" id="L38">            service.when(() -&gt; UserService.registerUser(any()) ).thenReturn(new User());</span>
+<span class="fc" id="L35">            service.when(() -&gt; UserService.registerUser(any()) ).thenReturn(new User());</span>
 
-<span class="fc" id="L40">            RegisterUserServlet servlet = new RegisterUserServlet();</span>
-<span class="fc" id="L41">            servlet.doPost(request,response);</span>
+<span class="fc" id="L37">            RegisterUserServlet servlet = new RegisterUserServlet();</span>
+<span class="fc" id="L38">            servlet.doPost(request,response);</span>
 
-<span class="fc" id="L43">            assertDoesNotThrow(</span>
-<span class="fc" id="L44">                    () -&gt; verify(response).sendRedirect(&quot;user/registrationsuccess.jsp&quot;),</span>
-                    &quot;RegisterUserServlet should called sendRedirect(\&quot;user/registrationsuccess.jsp\&quot;)&quot;);
+<span class="fc" id="L40">            assertAll(&quot;Register User Successfully assertions&quot;,</span>
+<span class="fc" id="L41">                    ()-&gt; assertDoesNotThrow(</span>
+<span class="fc" id="L42">                            () -&gt; verify(sessionMock).setAttribute(eq(&quot;User&quot;),any(User.class)),</span>
+                            &quot;RegisterUserServlet should called session.setAttribute(\&quot;User\&quot;,userobject)&quot;),
+<span class="fc" id="L44">                    ()-&gt; assertDoesNotThrow(</span>
+<span class="fc" id="L45">                        () -&gt; verify(response).sendRedirect(&quot;user/registrationsuccess.jsp&quot;),</span>
+                        &quot;RegisterUserServlet should called sendRedirect(\&quot;user/registrationsuccess.jsp\&quot;)&quot;)
+            );
         }
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L49">    }</span>
 
-    @Test public void testDoPostAlternativePath() throws IOException, ServletException {
+    @Test public void testDoPostNotRegister() throws IOException, ServletException {
         //Servlets always have two main parameters request &amp; repost which we need to mock
-<span class="fc" id="L51">        HttpServletRequest request = mock(HttpServletRequest.class);</span>
-<span class="fc" id="L52">        HttpServletResponse response = mock(HttpServletResponse.class);</span>
+<span class="fc" id="L53">        HttpServletRequest request = mock(HttpServletRequest.class);</span>
+<span class="fc" id="L54">        HttpServletResponse response = mock(HttpServletResponse.class);</span>
+<span class="fc" id="L55">        HttpSession sessionMock = mock(HttpSession.class); //In this case, also Session</span>
 
         //Setup the mock &quot;inputs&quot; on request
-<span class="fc" id="L55">        when(request.getParameter(&quot;txt_name&quot;)).thenReturn(&quot;TestName&quot;);</span>
-<span class="fc" id="L56">        when(request.getParameter(&quot;txt_login&quot;)).thenReturn(&quot;test@test.com&quot;);</span>
-<span class="fc" id="L57">        when(request.getParameter(&quot;txt_pass&quot;)).thenReturn(&quot;123456&quot;);</span>
-
-        //Setup the mock &quot;outputs&quot; on response
-<span class="fc" id="L60">        doNothing().when(response).sendRedirect(anyString());</span>
+<span class="fc" id="L58">        when(request.getParameter(&quot;txt_name&quot;)).thenReturn(&quot;TestName&quot;);</span>
+<span class="fc" id="L59">        when(request.getParameter(&quot;txt_login&quot;)).thenReturn(&quot;test@test.com&quot;);</span>
+<span class="fc" id="L60">        when(request.getParameter(&quot;txt_pass&quot;)).thenReturn(&quot;123456&quot;);</span>
+<span class="fc" id="L61">        when(request.getSession()).thenReturn(sessionMock);</span>
 
         //Also need to mock UserService, since it is static method, the mocking is different
-<span class="fc" id="L63">        try (MockedStatic&lt;UserService&gt; service = mockStatic(UserService.class)) {</span>
+<span class="fc" id="L64">        try (MockedStatic&lt;UserService&gt; service = mockStatic(UserService.class)) {</span>
             //Inside try block, we can replace static method calls to UserService
-<span class="fc" id="L65">            service.when(() -&gt; UserService.registerUser(any()) ).thenReturn(null);</span>
+<span class="fc" id="L66">            service.when(() -&gt; UserService.registerUser(any()) ).thenReturn(null);</span>
 
-<span class="fc" id="L67">            RegisterUserServlet servlet = new RegisterUserServlet();</span>
-<span class="fc" id="L68">            servlet.doPost(request,response);</span>
+<span class="fc" id="L68">            RegisterUserServlet servlet = new RegisterUserServlet();</span>
+<span class="fc" id="L69">            servlet.doPost(request,response);</span>
 
-<span class="fc" id="L70">            assertDoesNotThrow(</span>
-<span class="fc" id="L71">                    () -&gt; verify(response).sendRedirect(&quot;register.jsp?error=1&quot;),</span>
-                    &quot;RegisterUserServlet should called sendRedirect(\&quot;register.jsp?error=1\&quot;)&quot;);
+<span class="fc" id="L71">            assertAll(&quot;Register user - User not register assertions&quot;,</span>
+<span class="fc" id="L72">                    ()-&gt; assertDoesNotThrow(</span>
+<span class="fc" id="L73">                            () -&gt; verify(sessionMock, never()).setAttribute(eq(&quot;User&quot;),any(User.class)),</span>
+                            &quot;RegisterUserServlet should never called session.setAttribute(...) when user is not register.&quot;),
+<span class="fc" id="L75">                    ()-&gt; assertDoesNotThrow(</span>
+<span class="fc" id="L76">                        () -&gt; verify(response).sendRedirect(&quot;register.jsp?error=1&quot;),</span>
+                        &quot;RegisterUserServlet should called sendRedirect(\&quot;register.jsp?error=1\&quot;)&quot;)
+            );
         }
-<span class="fc" id="L74">    }</span>
+<span class="fc" id="L80">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

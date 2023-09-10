@@ -4,13 +4,15 @@ import edu.loyola.cs.se.parkinglotexample.model.dao.UserDAO;
 import edu.loyola.cs.se.parkinglotexample.model.entity.User;
 import edu.loyola.cs.se.parkinglotexample.util.PasswordUtil;
 
-<span class="nc" id="L7">public class UserService {</span>
+import java.util.List;
 
-<span class="fc" id="L9">    public static UserDAO dao = new UserDAO();</span>
+<span class="nc" id="L9">public class UserService {</span>
+
+<span class="fc" id="L11">    public static UserDAO dao = new UserDAO();</span>
 
     public static void setDAO(UserDAO dao){
-<span class="fc" id="L12">        UserService.dao = dao;</span>
-<span class="fc" id="L13">    }</span>
+<span class="fc" id="L14">        UserService.dao = dao;</span>
+<span class="fc" id="L15">    }</span>
 
     /***
      * Registers new user in the DB by calling the DAO.
@@ -21,14 +23,16 @@ import edu.loyola.cs.se.parkinglotexample.util.PasswordUtil;
      */
     public static User registerUser(User newUser){
         try {
-<span class="fc" id="L24">            newUser = dao.create(newUser);</span>
-<span class="fc" id="L25">        }catch(javax.persistence.PersistenceException ex){</span>
+<span class="fc" id="L26">            String hashed = PasswordUtil.hash(newUser.getPassword());</span>
+<span class="fc" id="L27">            newUser.setPassword(hashed);</span>
+<span class="fc" id="L28">            newUser = dao.create(newUser);</span>
+<span class="fc" id="L29">        }catch(javax.persistence.PersistenceException ex){</span>
             //Repeated login
-<span class="fc" id="L27">            newUser = null;</span>
-<span class="fc" id="L28">            System.out.println(ex);</span>
+<span class="fc" id="L31">            newUser = null;</span>
+<span class="fc" id="L32">            System.out.println(ex);</span>
         }
         finally {
-<span class="pc" id="L31">            return newUser;</span>
+<span class="pc" id="L35">            return newUser;</span>
         }
     }
 
@@ -39,16 +43,47 @@ import edu.loyola.cs.se.parkinglotexample.util.PasswordUtil;
      * @return The User record if successful or null if Login/Password incorrect.
      */
     public static User loginUser(String login, String unhashedPassword){
-<span class="fc" id="L42">        User found = dao.findUserByLogin(login);</span>
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">        if(found!=null){ //Found user by login</span>
+<span class="fc" id="L46">        User found = dao.findUserByLogin(login);</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">        if(found!=null){ //Found user by login</span>
             //We must certify the passwords match
-<span class="fc bfc" id="L45" title="All 2 branches covered.">            if(PasswordUtil.compare(unhashedPassword,found.getPassword())){</span>
-<span class="fc" id="L46">                return found;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            if(PasswordUtil.compare(unhashedPassword,found.getPassword())){</span>
+<span class="fc" id="L50">                return found;</span>
             }
             //I know I could combine both IFs in the same one,
             // I separated them to make it easier to explain the logic for some students
         }
-<span class="fc" id="L51">        return null; //Login or Password incorrect</span>
+<span class="fc" id="L55">        return null; //Login or Password incorrect</span>
+    }
+
+    /***
+     * Returns a list of all Users in the DB
+     * Usually for an Admin CRUD needs to see all data
+     * @param Order Which field to order the results
+     * @return User list
+     */
+    public static List&lt;User&gt; listUsers(String Order){
+<span class="fc" id="L65">        List&lt;User&gt; lstUser = dao.list(Order);</span>
+<span class="fc" id="L66">        return lstUser;</span>
+    }
+
+    public static void deleteUser(int id){
+<span class="fc" id="L70">        dao.delete(id);</span>
+<span class="fc" id="L71">    }</span>
+
+    public static User editUser(User u){
+
+<span class="pc bpc" id="L75" title="1 of 4 branches missed.">        if(u.getPassword()==null || u.getPassword().trim().length()==0){</span>
+            //No Password was given, we need to fetch it from DB
+<span class="fc" id="L77">            User original = dao.read(u.getID());</span>
+<span class="fc" id="L78">            u.setPassword(original.getPassword()); //original pass is already hashed (it is supposed to be!)</span>
+<span class="fc" id="L79">        }</span>
+        else{
+            //Password was typed, we need to hash it
+<span class="fc" id="L82">            String hashed = PasswordUtil.hash( u.getPassword() );</span>
+<span class="fc" id="L83">            u.setPassword(hashed);</span>
+        }
+
+<span class="fc" id="L86">        return dao.update(u);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

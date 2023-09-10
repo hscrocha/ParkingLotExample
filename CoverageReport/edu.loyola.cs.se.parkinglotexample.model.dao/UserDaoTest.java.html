@@ -46,101 +46,102 @@ import static org.junit.jupiter.api.Assertions.*;
 <span class="fc" id="L46">        assertAll(&quot;Grouped Assertions of Create User&quot;,</span>
 <span class="fc" id="L47">                () -&gt; assertNotNull(newuser.getID(), &quot;ID should not be null after creation&quot;),</span>
 <span class="fc" id="L48">                () -&gt; assertNotNull(found, &quot;Found user after reading should not be null&quot;),</span>
-<span class="fc" id="L49">                () -&gt; assertEquals(newuser.getLogin(), found.getLogin(), &quot;Login for the newuser must be equal to the Login for the found user&quot;)</span>
+<span class="fc" id="L49">                () -&gt; assertEquals(newuser.getLogin(), found.getLogin(), &quot;Login for the newuser must be equal to the Login for the found user&quot;),</span>
+<span class="fc" id="L50">                () -&gt; assertEquals(newuser.getPermissionAsString(),found.getPermissionAsString())</span>
                 );
-<span class="fc" id="L51">    }</span>
+<span class="fc" id="L52">    }</span>
 
     @Test public void testDeleteUserById(){
-<span class="fc" id="L54">        User newuser = createNewUserEntity();</span>
-<span class="fc" id="L55">        dao.create(newuser);</span>
-<span class="fc" id="L56">        dao.delete(newuser.getID());</span>
-<span class="fc" id="L57">        User found = dao.read(newuser);</span>
-<span class="fc" id="L58">        assertNull(found, &quot;User cannot be in the DB after deletion&quot;);</span>
-<span class="fc" id="L59">    }</span>
+<span class="fc" id="L55">        User newuser = createNewUserEntity();</span>
+<span class="fc" id="L56">        dao.create(newuser);</span>
+<span class="fc" id="L57">        dao.delete(newuser.getID());</span>
+<span class="fc" id="L58">        User found = dao.read(newuser);</span>
+<span class="fc" id="L59">        assertNull(found, &quot;User cannot be in the DB after deletion&quot;);</span>
+<span class="fc" id="L60">    }</span>
 
     @Test public void smokeTestDeleteWhatDoesNotExists(){
         //Smoke test has no assertion, we are only testing if this does not raise any exceptions
-<span class="fc" id="L63">        User notsaved = createNewUserEntity();</span>
-<span class="fc" id="L64">        assertDoesNotThrow(() -&gt; dao.delete(notsaved));</span>
-<span class="fc" id="L65">    }</span>
+<span class="fc" id="L64">        User notsaved = createNewUserEntity();</span>
+<span class="fc" id="L65">        assertDoesNotThrow(() -&gt; dao.delete(notsaved));</span>
+<span class="fc" id="L66">    }</span>
 
     @Test public void testUpdateUser(){
-<span class="fc" id="L68">        User newuser = createNewUserEntity();</span>
-<span class="fc" id="L69">        String newlogin = &quot;Altered&quot;;</span>
-<span class="fc" id="L70">        dao.create(newuser);</span>
-<span class="fc" id="L71">        newuser.setLogin(newlogin);</span>
-<span class="fc" id="L72">        User updated = dao.update(newuser);</span>
-<span class="fc" id="L73">        User found = dao.read(newuser);</span>
-<span class="fc" id="L74">        assertAll(&quot;Grouped Assertions of Updated User&quot;,</span>
-<span class="fc" id="L75">                () -&gt; assertEquals(updated.getLogin(),newlogin),</span>
-<span class="fc" id="L76">                () -&gt; assertEquals(updated.getID(), found.getID()),</span>
-<span class="fc" id="L77">                () -&gt; assertEquals(updated.getLogin(),found.getLogin()),</span>
-<span class="fc" id="L78">                () -&gt; assertEquals(updated.getPermission(),found.getPermission())</span>
+<span class="fc" id="L69">        User newuser = createNewUserEntity();</span>
+<span class="fc" id="L70">        String newlogin = &quot;Altered&quot;;</span>
+<span class="fc" id="L71">        dao.create(newuser);</span>
+<span class="fc" id="L72">        newuser.setLogin(newlogin);</span>
+<span class="fc" id="L73">        User updated = dao.update(newuser);</span>
+<span class="fc" id="L74">        User found = dao.read(newuser);</span>
+<span class="fc" id="L75">        assertAll(&quot;Grouped Assertions of Updated User&quot;,</span>
+<span class="fc" id="L76">                () -&gt; assertEquals(updated.getLogin(),newlogin),</span>
+<span class="fc" id="L77">                () -&gt; assertEquals(updated.getID(), found.getID()),</span>
+<span class="fc" id="L78">                () -&gt; assertEquals(updated.getLogin(),found.getLogin()),</span>
+<span class="fc" id="L79">                () -&gt; assertEquals(updated.getPermission(),found.getPermission())</span>
             );
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L81">    }</span>
 
     @Test public void testList(){
-<span class="fc" id="L83">        User u1 = createNewUserEntity();</span>
-<span class="fc" id="L84">        User u2 = createNewUserEntity();</span>
-<span class="fc" id="L85">        User u3 = createNewUserEntity();</span>
-<span class="fc" id="L86">        u1.setEmail(&quot;ZZ&quot;);</span>
-<span class="fc" id="L87">        u2.setEmail(&quot;LL&quot;);</span>
-<span class="fc" id="L88">        u3.setEmail(&quot;AA&quot;);</span>
-<span class="fc" id="L89">        dao.create(u1);</span>
-<span class="fc" id="L90">        dao.create(u2);</span>
-<span class="fc" id="L91">        dao.create(u3);</span>
-<span class="fc" id="L92">        java.util.List&lt;User&gt; lstUser = dao.list(&quot;login&quot;);</span>
-<span class="fc" id="L93">        assertAll(&quot;Grouped Assertions for List User&quot;,</span>
-<span class="fc" id="L94">                () -&gt; assertEquals(lstUser.size(), 3),</span>
-<span class="fc" id="L95">                () -&gt; assertEquals(lstUser.get(0).getLogin(),&quot;AA&quot;),</span>
-<span class="fc" id="L96">                () -&gt; assertEquals(lstUser.get(2).getEmail(),&quot;ZZ&quot;)</span>
+<span class="fc" id="L84">        User u1 = createNewUserEntity();</span>
+<span class="fc" id="L85">        User u2 = createNewUserEntity();</span>
+<span class="fc" id="L86">        User u3 = createNewUserEntity();</span>
+<span class="fc" id="L87">        u1.setEmail(&quot;ZZ&quot;);</span>
+<span class="fc" id="L88">        u2.setEmail(&quot;LL&quot;);</span>
+<span class="fc" id="L89">        u3.setEmail(&quot;AA&quot;);</span>
+<span class="fc" id="L90">        dao.create(u1);</span>
+<span class="fc" id="L91">        dao.create(u2);</span>
+<span class="fc" id="L92">        dao.create(u3);</span>
+<span class="fc" id="L93">        java.util.List&lt;User&gt; lstUser = dao.list(&quot;login&quot;);</span>
+<span class="fc" id="L94">        assertAll(&quot;Grouped Assertions for List User&quot;,</span>
+<span class="fc" id="L95">                () -&gt; assertEquals(lstUser.size(), 3),</span>
+<span class="fc" id="L96">                () -&gt; assertEquals(lstUser.get(0).getLogin(),&quot;AA&quot;),</span>
+<span class="fc" id="L97">                () -&gt; assertEquals(lstUser.get(2).getEmail(),&quot;ZZ&quot;)</span>
         );
-<span class="fc" id="L98">    }</span>
+<span class="fc" id="L99">    }</span>
 
     @Test
     public void testCreateUniqueConstraintLogin(){
-<span class="fc" id="L102">        User user1 = createNewUserEntity();</span>
-<span class="fc" id="L103">        dao.create(user1);</span>
+<span class="fc" id="L103">        User user1 = createNewUserEntity();</span>
+<span class="fc" id="L104">        dao.create(user1);</span>
 
-<span class="fc" id="L105">        User user2 = createNewUserEntity();</span>
-<span class="fc" id="L106">        assertThrows(javax.persistence.PersistenceException.class,</span>
-<span class="nc" id="L107">                () -&gt; dao.create(user2),</span>
+<span class="fc" id="L106">        User user2 = createNewUserEntity();</span>
+<span class="fc" id="L107">        assertThrows(javax.persistence.PersistenceException.class,</span>
+<span class="nc" id="L108">                () -&gt; dao.create(user2),</span>
                 &quot;Login is a unique field in the DB, cannot have repeated login saved on create.&quot;
         );//Should not allow to create two user with the same Login
-<span class="fc" id="L110">    }</span>
+<span class="fc" id="L111">    }</span>
 
     @Test
     public void testUpdateUniqueConstraintLogin(){
-<span class="fc" id="L114">        User user1 = createNewUserEntity();</span>
-<span class="fc" id="L115">        dao.create(user1);</span>
+<span class="fc" id="L115">        User user1 = createNewUserEntity();</span>
+<span class="fc" id="L116">        dao.create(user1);</span>
 
-<span class="fc" id="L117">        User user2 = createNewUserEntity();</span>
-<span class="fc" id="L118">        user2.setLogin(&quot;different@test.com&quot;);</span>
-<span class="fc" id="L119">        dao.create(user2);</span>
+<span class="fc" id="L118">        User user2 = createNewUserEntity();</span>
+<span class="fc" id="L119">        user2.setLogin(&quot;different@test.com&quot;);</span>
+<span class="fc" id="L120">        dao.create(user2);</span>
 
-<span class="fc" id="L121">        user2.setLogin( user1.getLogin() ); //Set Login to one that in DB</span>
+<span class="fc" id="L122">        user2.setLogin( user1.getLogin() ); //Set Login to one that in DB</span>
 
-<span class="fc" id="L123">        assertThrows(javax.persistence.PersistenceException.class,</span>
-<span class="nc" id="L124">                () -&gt; dao.update(user2),</span>
+<span class="fc" id="L124">        assertThrows(javax.persistence.PersistenceException.class,</span>
+<span class="nc" id="L125">                () -&gt; dao.update(user2),</span>
                 &quot;Login is a unique field in the DB, cannot have repeated login saved on update.&quot;
         );//Should not allow to create two user with the same Login
-<span class="fc" id="L127">    }</span>
+<span class="fc" id="L128">    }</span>
 
     @Test public void testLoginSuccess(){
-<span class="fc" id="L130">        User newuser = createNewUserEntity();</span>
+<span class="fc" id="L131">        User newuser = createNewUserEntity();</span>
 
-<span class="fc" id="L132">        dao.create(newuser); //Create a new user</span>
-<span class="fc" id="L133">        User logged = dao.findUserByLogin(newuser.getLogin());</span>
-<span class="fc" id="L134">        assertAll(&quot;Successful Login Assertions&quot;,</span>
-<span class="fc" id="L135">                ()-&gt; assertNotNull(logged,&quot;Logged user cannot be null&quot;),</span>
-<span class="fc" id="L136">                ()-&gt; assertNotNull(logged.getPassword(), &quot;Password from logged user cannot be null&quot;),</span>
-<span class="pc bpc" id="L137" title="1 of 2 branches missed.">                ()-&gt; assertTrue(logged.getPassword().length()&gt;0, &quot;Password cannot be empty&quot;)</span>
+<span class="fc" id="L133">        dao.create(newuser); //Create a new user</span>
+<span class="fc" id="L134">        User logged = dao.findUserByLogin(newuser.getLogin());</span>
+<span class="fc" id="L135">        assertAll(&quot;Successful Login Assertions&quot;,</span>
+<span class="fc" id="L136">                ()-&gt; assertNotNull(logged,&quot;Logged user cannot be null&quot;),</span>
+<span class="fc" id="L137">                ()-&gt; assertNotNull(logged.getPassword(), &quot;Password from logged user cannot be null&quot;),</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">                ()-&gt; assertTrue(logged.getPassword().length()&gt;0, &quot;Password cannot be empty&quot;)</span>
         );
-<span class="fc" id="L139">    }</span>
+<span class="fc" id="L140">    }</span>
 
     @Test public void testLoginFailure(){
-<span class="fc" id="L142">        User logged = dao.findUserByLogin(&quot;DoesNotExist@nowhere.com&quot;);</span>
-<span class="fc" id="L143">        assertNull(logged, &quot;Logged User must return null if Login not found&quot;);</span>
-<span class="fc" id="L144">    }</span>
+<span class="fc" id="L143">        User logged = dao.findUserByLogin(&quot;DoesNotExist@nowhere.com&quot;);</span>
+<span class="fc" id="L144">        assertNull(logged, &quot;Logged User must return null if Login not found&quot;);</span>
+<span class="fc" id="L145">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
