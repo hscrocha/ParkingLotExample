@@ -20,7 +20,7 @@
 
 <div class="container mt-2">
     <h3 class="center text-primary"> Admin </h3>
-
+    <% if(logged!=null && logged.getPermission()==User.ADMIN_PERMISSION){ %>
     <div class="row">
         <div class="d-grid col-3 col-md-1 offset-1">
             <a href="admin/cruduser.jsp" class="btn btn-primary" style="width:100px">
@@ -41,6 +41,18 @@
             </a>
         </div>
     </div>
+    <% } else { %>
+       <%-- We should also add a similar code and check to cruduser.jsp
+       and any other page exclusive to admin --%>
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Access Denied!</h4>
+        <p>You do not have permission to access administrator content.</p>
+        <hr>
+        <p class="mb-0">
+        Nice try, but I am an experience programmer.
+        </p>
+    </div>
+    <% } //end-else-if %>
 </div>
 
 <%-- =================================== --%>
