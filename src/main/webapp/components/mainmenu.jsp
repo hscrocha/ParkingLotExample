@@ -32,7 +32,7 @@ to any web page I want.
       </li>
       <% } //end-if %>
       <li class="nav-item">
-        <a class="nav-link" href="#">Contact</a>
+        <a class="nav-link" href="contact.jsp">Contact</a>
       </li>
       <% if(logged!=null && logged.getPermission()==User.ADMIN_PERMISSION){ %>
       <li id="menu-admin" class="nav-item">
