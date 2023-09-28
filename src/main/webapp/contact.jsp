@@ -17,7 +17,7 @@
 
 <div class="container mt-2">
     <h3 class="center text-primary"> Contact </h3>
-    <form method="post" action="">
+    <form method="post" action="messageContactServlet">
         <div class="row mb-2">
             <label class="col-form-label col-md-3 col-lg-1" for="txt_name"> Name: </label>
             <div class="col-12 col-md-6">
