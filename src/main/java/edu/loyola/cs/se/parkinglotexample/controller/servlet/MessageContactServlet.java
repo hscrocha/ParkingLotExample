@@ -26,7 +26,7 @@ public class MessageContactServlet extends HttpServlet {
         c.setSubject(subject);
         c.setMessage(message);
 
-        ContactDAO dao = new ContactDAO(Contact.class);
+        ContactDAO dao = new ContactDAO();
         dao.create(c);
 
         response.sendRedirect("index.jsp");
