@@ -14,6 +14,12 @@ import java.io.PrintWriter;
 @WebServlet(name = "messageContactServlet", value = "/messageContactServlet")
 public class MessageContactServlet extends HttpServlet {
 
+    protected ContactDAO dao = new ContactDAO();
+
+    public void setDao(ContactDAO newdao){
+        this.dao = newdao;
+    }
+
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException{
         String name = request.getParameter("txt_name");
         String email = request.getParameter("txt_email");
@@ -26,7 +32,6 @@ public class MessageContactServlet extends HttpServlet {
         c.setSubject(subject);
         c.setMessage(message);
 
-        ContactDAO dao = new ContactDAO();
         dao.create(c);
 
         response.sendRedirect("index.jsp");
